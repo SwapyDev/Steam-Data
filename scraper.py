@@ -4,8 +4,8 @@ import pandas as pd
 
 data = []
 def extract():
-    for start in range(0,250,50):
-        url = f'https://store.steampowered.com/search/?specials=1&start={start}'
+    for start in range(0,2000,50):
+        url = f'https://store.steampowered.com/search/?sort_by=Reviews_DESC&specials=1&start={start}'
         try:
             response = requests.get(url)
             res_text = response.text
@@ -30,4 +30,5 @@ def extract():
         except Exception as e:
             print('Error:',e) 
     df =  pd.DataFrame(data)
+    df.to_csv('caca.csv', index=False)
     return df

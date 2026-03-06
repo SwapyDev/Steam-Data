@@ -22,21 +22,40 @@ async def on_ready():
 
 @bot.command(name='offers')
 async def offers_command(ctx):
-    cursor.execute("""
+    cursor.execute(("""
     SELECT title, original_price, current_price, discount, img_src, game_src
     FROM game_sales ORDER BY discount DESC
-    LIMIT 5
-                   """)
+    LIMIT 10
+                   """))
     message = ""
     rows = cursor.fetchall()
     #another way to do it, (just practicing pandas lol)
     #df = pd.DataFrame(rows)
     #for index, row in df.iterrows():
         #message += f'{row[0]}, {row[1]}, {row[2]}, {row[3]}\n'
-    for title, original, current, discount in rows:
+    for title, original, current, discount, img_src, game_src in rows:
         message += f'{title} | ${original} -> ${current}, {discount}% off\n'
-    
-    await ctx.send(embed=embed)
+    await ctx.send(message)
+    #await ctx.send(embed=embed)
+
+
+@bot.command(name='offer')
+async def offers_command(ctx, *, query:int):
+    cursor.execute(("""
+    SELECT title, original_price, current_price, discount, img_src, game_src
+    FROM game_sales ORDER BY discount DESC
+    LIMIT %s
+                   """), (query,))
+    message = ""
+    rows = cursor.fetchall()
+    #another way to do it, (just practicing pandas lol)
+    #df = pd.DataFrame(rows)
+    #for index, row in df.iterrows():
+        #message += f'{row[0]}, {row[1]}, {row[2]}, {row[3]}\n'
+    for title, original, current, discount, img_src, game_src in rows:
+        message += f'{title} | ${original} -> ${current}, {discount}% off\n'
+    await ctx.send(message)
+    #await ctx.send(embed=embed)
 
 @bot.command(name='search')
 async def search_game(ctx, *, query:str):
@@ -45,7 +64,7 @@ async def search_game(ctx, *, query:str):
     SELECT * 
     FROM game_sales 
     WHERE title
-    LIKE %s
+    ILIKE %s
     """,(game_to_search))
     row = cursor.fetchone()
     if row:
