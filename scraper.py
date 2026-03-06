@@ -16,11 +16,16 @@ def extract():
                 title = game.select_one('.title').text
                 og_price = game.select_one('.discount_original_price').text
                 current_price = game.select_one('.discount_final_price').text
+                image_element = game.select_one('.search_capsule img')
+                source_image = image_element.get('src')
+                source_game = game.get('href')
 
                 data.append({
-                    'Game Title':title,
-                    'Original Price':og_price,
-                    'Current Price': current_price
+                    'title':title,
+                    'original_price':og_price,
+                    'current_price': current_price,
+                    'img_src': source_image,
+                    'game_src': source_game
                 })
         except Exception as e:
             print('Error:',e) 
